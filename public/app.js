@@ -26,8 +26,18 @@ async function loadChannels() { const d = await api('/channels'); S.channels = d
 async function createChannel() { const name = prompt('Channel name:'); if (!name) return; const d = await api('/channels', { method: 'POST', body: JSON.stringify({ name }) }); S.channels.push(d.data); renderChannels(); selectChannel(d.data); }
 function renderChannels() {
   const list = $('channel-list');
-  list.innerHTML = S.channels.map(ch => `<div class="channel-item ${S.activeChannel?.id === ch.id ? 'active' : ''}" data-id="${esc(ch.id)}"><span class="channel-hash">#</span><span>${esc(ch.name)}</span></div>`).join('');
-  list.querySelectorAll('.channel-item').forEach(el => el.onclick = () => selectChannel(S.channels.find(c => c.id === el.dataset.id)));
+  list.innerHTML = S.channels.map(ch => `<div class="channel-item ${S.activeChannel?.id === ch.id ? 'active' : ''}" data-id="${esc(ch.id)}"><span class="channel-hash">#</span><span class="channel-name-text">${esc(ch.name)}</span><button class="channel-delete" data-id="${esc(ch.id)}" title="Delete channel">&times;</button></div>`).join('');
+  list.querySelectorAll('.channel-item').forEach(el => el.onclick = e => { if (!e.target.classList.contains('channel-delete')) selectChannel(S.channels.find(c => c.id === el.dataset.id)); });
+  list.querySelectorAll('.channel-delete').forEach(btn => btn.onclick = e => { e.stopPropagation(); deleteChannel(btn.dataset.id); });
+}
+async function deleteChannel(id) {
+  const ch = S.channels.find(c => c.id === id);
+  if (!ch) return;
+  if (!confirm(`Delete channel #${ch.name}?`)) return;
+  await api(`/channels/${id}`, { method: 'DELETE' });
+  S.channels = S.channels.filter(c => c.id !== id);
+  if (S.activeChannel?.id === id) { S.activeChannel = S.channels[0] || null; if (S.activeChannel) selectChannel(S.activeChannel); else $('message-list').innerHTML = ''; }
+  renderChannels();
 }
 async function selectChannel(ch) {
   S.activeChannel = ch; $('channel-name').textContent = ch.name; $('mobile-channel-name').textContent = `# ${ch.name}`;
