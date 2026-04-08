@@ -37,7 +37,7 @@ export function list(channelId: string, page: number, limit: number = DEFAULT_PA
   const hasMore = items.length > limit;
   if (hasMore) items.pop();
 
-  return { items: items.reverse(), hasMore };
+  return { items, hasMore };
 }
 
 export function get(id: string): Message | null {
