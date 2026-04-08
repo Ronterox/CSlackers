@@ -87,7 +87,7 @@ input[type="text"]:focus { outline: none; border-color: var(--accent); }
 .channel-hash { color: var(--text-muted); }
 .channel-name-text { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .channel-delete { display: none; background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; padding: 0 4px; line-height: 1; border-radius: 4px; }
-.channel-item:hover .channel-delete { display: block; }
+.channel-item:hover .channel-delete { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 20px; }
 .channel-delete:hover { color: var(--accent); background: rgba(233,69,96,0.15); }
 .connection-status { display: flex; align-items: center; gap: 8px; padding: 12px 16px; font-size: 0.85rem; color: var(--text-sec); border-top: 1px solid var(--border); }
 
