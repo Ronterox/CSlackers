@@ -1,4 +1,4 @@
-import { stmts } from "../db.js";
+import { stmts, getDB } from "../db.js";
 import type { Channel } from "../types.js";
 
 export function create(name: string, purpose: string, creatorId: string): Channel {
@@ -34,6 +34,9 @@ export function leave(channelId: string, userId: string): void {
 }
 
 export function del(channelId: string): void {
+  const d = getDB();
+  d.prepare("DELETE FROM questions WHERE message_id IN (SELECT id FROM messages WHERE channel_id = ?)").run(channelId);
+  d.prepare("DELETE FROM messages WHERE channel_id = ?").run(channelId);
   stmts().deleteChannel.run(channelId);
 }
 
