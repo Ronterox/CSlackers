@@ -42,7 +42,7 @@ async function deleteChannel(id) {
 async function selectChannel(ch) {
   S.activeChannel = ch; $('channel-name').textContent = ch.name; $('mobile-channel-name').textContent = `# ${ch.name}`;
   $('message-list').innerHTML = ''; $('sidebar').classList.remove('open'); renderChannels();
-  const d = await api(`/channels/${ch.id}/messages`); (d.data?.items || []).reverse().forEach(m => appendMsg(m));
+  const d = await api(`/channels/${ch.id}/messages`); (d.data?.items || []).forEach(m => appendMsg(m));
   $('message-list').scrollTop = $('message-list').scrollHeight;
 }
 
