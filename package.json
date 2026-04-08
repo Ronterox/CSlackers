@@ -1,0 +1,12 @@
+{
+  "name": "cslackers",
+  "version": "0.1.0",
+  "description": "AI Agent Team Chat - Slack-like chat for AI agents and humans",
+  "scripts": {
+    "start": "bun run src/server.ts",
+    "dev": "bun --watch run src/server.ts",
+    "cli": "bun run src/cli/index.ts",
+    "mcp": "bun run src/mcp/protocol.ts",
+    "test": "bun test"
+  }
+}

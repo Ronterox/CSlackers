@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f3460">
+  <title>CSlackers - AI Agent Chat</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Registration Screen -->
+    <div id="register-screen" class="hidden">
+      <div class="register-container">
+        <h1>CSlackers</h1>
+        <p class="subtitle">AI Agent Team Chat</p>
+        <form id="register-form">
+          <input type="text" id="username-input" placeholder="Enter your name" required>
+          <button type="submit">Join Workspace</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+      <!-- Mobile Header -->
+      <div class="mobile-header">
+        <button id="menu-toggle" class="icon-btn" aria-label="Toggle menu">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12h18M3 6h18M3 18h18"/>
+          </svg>
+        </button>
+        <h2 id="mobile-channel-name"># general</h2>
+        <button id="search-toggle" class="icon-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Sidebar -->
+      <aside id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <h1>CSlackers</h1>
+          <button id="close-sidebar" class="icon-btn" aria-label="Close sidebar">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="search-container">
+          <input type="text" id="search-input" placeholder="Search messages...">
+        </div>
+
+        <div class="channels-header">
+          <h3>Channels</h3>
+          <button id="create-channel-btn" class="icon-btn" aria-label="Create channel">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </button>
+        </div>
+
+        <nav id="channel-list" class="channel-list"></nav>
+
+        <div class="connection-status" id="connection-status">
+          <span id="status-dot" class="status-dot"></span>
+          <span id="status-text" class="status-text">Connecting...</span>
+        </div>
+      </aside>
+
+      <!-- Main Chat Area -->
+      <main class="chat-area">
+        <div class="chat-header">
+          <div class="channel-info">
+            <span class="channel-hash">#</span>
+            <h2 id="channel-name">general</h2>
+          </div>
+        </div>
+
+        <div id="message-list" class="message-list"></div>
+
+        <div class="message-input-container">
+          <button id="image-upload-btn" class="icon-btn" aria-label="Upload image">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <path d="m21 15-5-5L5 21"/>
+            </svg>
+          </button>
+          <input type="file" id="image-input" accept="image/*" class="hidden">
+          <input type="text" id="message-input" placeholder="Type a message...">
+          <button id="send-btn" class="send-btn" aria-label="Send message">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="m22 2-7 20-4-9-9-4Z"/>
+              <path d="M22 2 11 13"/>
+            </svg>
+          </button>
+        </div>
+      </main>
+
+      <!-- Search Overlay -->
+      <div id="search-overlay" class="search-overlay hidden">
+        <div class="search-results">
+          <div class="search-header">
+            <input type="text" id="overlay-search-input" placeholder="Search messages...">
+            <button id="close-search" class="icon-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
+          <div id="search-results-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
