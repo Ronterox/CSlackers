@@ -94,18 +94,22 @@ async function _handleRequest(req: Request): Promise<Response> {
       return json({ ok: true, data: messageService.list(cid, parseInt(url.searchParams.get("page") || "0")) });
     if (sub === "/messages" && req.method === "POST") {
       const body = await req.json();
-      // Branch: question type uses questionService.ask()
       if (body.type === "question") {
         const result = questionService.ask(cid, user.id, body.content);
+        broadcast({ type: "message", payload: { ...result.message, channel_id: cid, user_name: user.name, user_type: user.type, question_id: result.question.id } });
         return json({ ok: true, data: { ...result.message, question_id: result.question.id } });
       }
-      return json({ ok: true, data: messageService.send(cid, user.id, body.type || "text", body.content, body.replyTo) });
+      const msg = messageService.send(cid, user.id, body.type || "text", body.content, body.replyTo);
+      broadcast({ type: "message", payload: { ...msg, channel_id: cid, user_name: user.name, user_type: user.type } });
+      return json({ ok: true, data: msg });
     }
     if (sub === "/images" && req.method === "POST") {
       const fd = await req.formData();
       const file = fd.get("image");
       if (!file || !(file instanceof File)) return json({ ok: false, error: "No image provided" }, 400);
-      return json({ ok: true, data: await imageService.upload(file, cid, user.id) });
+      const msg = await imageService.upload(file, cid, user.id);
+      broadcast({ type: "message", payload: { ...msg, channel_id: cid, user_name: user.name, user_type: user.type } });
+      return json({ ok: true, data: msg });
     }
   }
 
