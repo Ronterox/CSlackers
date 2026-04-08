@@ -82,7 +82,7 @@ export const stmts = () => {
     getMembers: d.prepare("SELECT u.* FROM users u JOIN channel_members cm ON u.id = cm.user_id WHERE cm.channel_id = ?"),
     isMember: d.prepare("SELECT 1 FROM channel_members WHERE channel_id = ? AND user_id = ?"),
     insertMessage: d.prepare("INSERT INTO messages (id, channel_id, user_id, type, content, reply_to, created) VALUES (?, ?, ?, ?, ?, ?, ?)"),
-    getMessages: d.prepare("SELECT m.*, u.name as user_name FROM messages m JOIN users u ON m.user_id = u.id WHERE m.channel_id = ? ORDER BY m.created DESC LIMIT ? OFFSET ?"),
+    getMessages: d.prepare("SELECT m.*, u.name as user_name, u.type as user_type FROM messages m JOIN users u ON m.user_id = u.id WHERE m.channel_id = ? ORDER BY m.created DESC LIMIT ? OFFSET ?"),
     getMessage: d.prepare("SELECT * FROM messages WHERE id = ?"),
     insertQuestion: d.prepare("INSERT INTO questions (id, message_id, asked_by, status, created) VALUES (?, ?, ?, 'open', ?)"),
     getQuestion: d.prepare("SELECT * FROM questions WHERE id = ?"),
