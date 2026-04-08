@@ -59,6 +59,17 @@ describe("Message Service", () => {
     expect(page1.hasMore).toBe(false);
   });
 
+  test("returns messages in chronological order (oldest first)", () => {
+    const { user, channel } = makeChannel();
+    messageService.send(channel.id, user.id, "text", "first");
+    messageService.send(channel.id, user.id, "text", "second");
+    messageService.send(channel.id, user.id, "text", "third");
+    const result = messageService.list(channel.id, 0);
+    expect(result.items[0].content).toBe("first");
+    expect(result.items[1].content).toBe("second");
+    expect(result.items[2].content).toBe("third");
+  });
+
   test("pagination beyond range returns empty", () => {
     const { user, channel } = makeChannel();
     messageService.send(channel.id, user.id, "text", "hi");
