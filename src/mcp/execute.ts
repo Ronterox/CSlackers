@@ -98,8 +98,70 @@ async function postStatus(args: Record<string, unknown>): Promise<MCPToolResult>
   return textResult(`Status posted to ${args.channel}`);
 }
 
+async function createChannel(args: Record<string, unknown>): Promise<MCPToolResult> {
+  validateArgs(args, ["name"]);
+  const res = await apiFetch("/api/channels", {
+    method: "POST",
+    body: JSON.stringify({ name: args.name, purpose: args.purpose || "" }),
+  });
+  if (!res.ok) throw new Error(`Failed to create channel: ${await res.text()}`);
+  const data = await res.json();
+  return textResult(JSON.stringify(data.data, null, 2));
+}
+
+async function getMessages(args: Record<string, unknown>): Promise<MCPToolResult> {
+  validateArgs(args, ["channel"]);
+  const cid = await findChannelId(args.channel as string, serverUrl, authToken);
+  if (!cid) throw new Error(`Channel not found: ${args.channel}`);
+  const limit = (args.limit as number) || 50;
+  const res = await apiFetch(`/api/channels/${cid}/messages?limit=${limit}&page=0`);
+  if (!res.ok) throw new Error("Failed to read messages");
+  const data = await res.json();
+  let messages: Record<string, unknown>[] = data.data?.items || [];
+
+  // Time filtering
+  if (args.since) {
+    const sinceTime = typeof args.since === "number" ? args.since : new Date(args.since as string).getTime();
+    if (!isNaN(sinceTime)) messages = messages.filter((m: Record<string, unknown>) => (m.created as number) >= sinceTime);
+  }
+  if (args.until) {
+    const untilTime = typeof args.until === "number" ? args.until : new Date(args.until as string).getTime();
+    if (!isNaN(untilTime)) messages = messages.filter((m: Record<string, unknown>) => (m.created as number) <= untilTime);
+  }
+
+  // Regex filtering
+  if (args.regex) {
+    try {
+      const re = new RegExp(args.regex as string, "i");
+      messages = messages.filter((m: Record<string, unknown>) => re.test(m.content as string));
+    } catch { /* invalid regex, skip filter */ }
+  }
+
+  return textResult(JSON.stringify(messages, null, 2));
+}
+
+async function getHistory(args: Record<string, unknown>): Promise<MCPToolResult> {
+  validateArgs(args, ["channel"]);
+  const cid = await findChannelId(args.channel as string, serverUrl, authToken);
+  if (!cid) throw new Error(`Channel not found: ${args.channel}`);
+  let allMessages: Record<string, unknown>[] = [];
+  let page = 0;
+  let hasMore = true;
+  while (hasMore) {
+    const res = await apiFetch(`/api/channels/${cid}/messages?limit=100&page=${page}`);
+    if (!res.ok) throw new Error("Failed to get history");
+    const data = await res.json();
+    const items: Record<string, unknown>[] = data.data?.items || [];
+    hasMore = data.data?.hasMore || false;
+    allMessages = allMessages.concat(items);
+    page++;
+  }
+  return textResult(JSON.stringify(allMessages, null, 2));
+}
+
 const dispatch: Record<string, (args: Record<string, unknown>) => Promise<MCPToolResult>> = {
-  post_message: postMessage, read_messages: readMessages, ask_question: askQuestion,
+  create_channel: createChannel, post_message: postMessage, get_messages: getMessages,
+  get_history: getHistory, read_messages: readMessages, ask_question: askQuestion,
   search_messages: searchMessages, list_channels: listChannels, join_channel: joinChannel,
   post_status: postStatus,
 };

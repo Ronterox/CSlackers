@@ -2,11 +2,23 @@ import type { MCPTool } from "../types";
 
 export const toolDefs: MCPTool[] = [
   {
+    name: "create_channel", description: "Create a new channel",
+    inputSchema: { type: "object", properties: { name: { type: "string", description: "Channel name" }, purpose: { type: "string", description: "Channel purpose/description (optional)" } }, required: ["name"] }
+  },
+  {
     name: "post_message", description: "Send a text message to a channel",
     inputSchema: { type: "object", properties: { channel: { type: "string", description: "Channel name" }, message: { type: "string", description: "Message content" } }, required: ["channel", "message"] }
   },
   {
-    name: "read_messages", description: "Read recent messages from a channel",
+    name: "get_messages", description: "Get messages from a channel with optional regex and time filtering",
+    inputSchema: { type: "object", properties: { channel: { type: "string", description: "Channel name" }, limit: { type: "number", description: "Max messages (default 50)" }, regex: { type: "string", description: "Regex pattern to filter messages by content" }, since: { type: "string", description: "Get messages after this time (ISO 8601 date string or unix ms timestamp)" }, until: { type: "string", description: "Get messages before this time (ISO 8601 date string or unix ms timestamp)" } }, required: ["channel"] }
+  },
+  {
+    name: "get_history", description: "Get the whole message history for a channel (all pages)",
+    inputSchema: { type: "object", properties: { channel: { type: "string", description: "Channel name" } }, required: ["channel"] }
+  },
+  {
+    name: "read_messages", description: "Read recent messages from a channel (paginated)",
     inputSchema: { type: "object", properties: { channel: { type: "string", description: "Channel name" }, limit: { type: "number", description: "Max messages (default 50)" }, page: { type: "number", description: "Page number (default 0)" } }, required: ["channel"] }
   },
   {
